@@ -3,7 +3,7 @@ import traceback
 from functools import wraps
 
 from pyrogram import Client
-from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
+from pyrogram.errors import ChatWriteForbidden
 
 
 def split_limits(text):
@@ -27,11 +27,11 @@ def split_limits(text):
 
 def capture_err(func):
     @wraps(func)
-    async def capture(client, message, *args, **kwargs):
+    async def capture(client: Client, message, *args, **kwargs):
         try:
             return await func(client, message, *args, **kwargs)
         except ChatWriteForbidden:
-            await Client.leave_chat(message.chat.id)
+            await client.leave_chat(message.chat.id)
             return
         except Exception as err:
             exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -49,7 +49,7 @@ def capture_err(func):
                 ),
             )
             for x in error_feedback:
-                await Client.send_message(-1001568994954, x)
+                await client.send_message(-1001568994954, x)
             raise err
 
     return capture
