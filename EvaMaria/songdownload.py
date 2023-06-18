@@ -4,6 +4,8 @@ import asyncio
 import math
 import os
 import time
+from urllib.parse import urlparse
+from random import randint
 
 import aiofiles
 import aiohttp
@@ -18,12 +20,12 @@ from config import HNDLR
 
 
 @Client.on_message(filters.command(["song", "music"], prefixes=f"{HNDLR}"))
-async def song(client, message: Message):
+async def song_command(client, message: Message):
     urlissed = get_text(message)
     if not urlissed:
         await client.send_message(
             message.chat.id,
-            "⚠️Check spelling!",
+            "⚠️ Check spelling!",
         )
         return
     pablo = await client.send_message(message.chat.id, f"**🔎 Searching** `{urlissed}`")
@@ -211,7 +213,7 @@ def get_file_extension_from_url(url):
     return basename.split(".")[-1]
 
 
-# Funtion To Download Song
+# Function To Download Song
 async def download_song(url):
     song_name = f"{randint(6969, 6999)}.mp3"
     async with aiohttp.ClientSession() as session:
@@ -275,16 +277,17 @@ async def vsong(client, message: Message):
     file_stark = f"{ytdl_data['id']}.mp4"
     capy = f"""
 **🏷️ Video :** [{thum}]({mo})
-**🎬 Requested by:** {message.from_user.mention}
+**🎧 Requested By :** {message.from_user.mention}
 """
+    await client.send_chat_action(message.chat.id, "record_video")
     await client.send_video(
         message.chat.id,
         video=open(file_stark, "rb"),
-        duration=int(ytdl_data["duration"]),
-        file_name=str(ytdl_data["title"]),
-        thumb=sedlyf,
         caption=capy,
+        duration=int(ytdl_data["duration"]),
+        performer=str(ytdl_data["uploader"]),
         supports_streaming=True,
+        thumb=sedlyf,
         progress=progress,
         progress_args=(
             pablo,
