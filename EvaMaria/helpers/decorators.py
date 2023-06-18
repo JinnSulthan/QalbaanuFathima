@@ -1,8 +1,6 @@
 from typing import Callable
-
 from pyrogram import Client
 from pyrogram.types import Message
-
 from config import SUDO_USERS
 from EvaMaria.helpers.admins import get_administrators
 
@@ -15,7 +13,7 @@ def authorized_users_only(func: Callable) -> Callable:
         administrators = await get_administrators(message.chat)
 
         for administrator in administrators:
-            if administrator == message.from_user.id:
+            if administrator.user.id == message.from_user.id:
                 return await func(client, message)
 
     return decorator
