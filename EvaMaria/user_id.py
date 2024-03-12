@@ -5,13 +5,14 @@ from EvaMaria.helpers.get_file_id import get_file_id
 from EvaMaria.config import HNDLR
 
 
-@Client.on_message(filters.command(["id"], prefixes=f"{HNDLR}"))
+# Command to show user or chat ID
+@app.on_message(filters.command(["id"], prefixes=f"{HNDLR}"))
 async def show_id(client, message: Message):
     chat_type = message.chat.type
 
     if chat_type == "private":
         user_id = message.chat.id
-        await message.reply_text(f"<code>{user_id}</code>")
+        await message.reply_text(f"<code>{user_id}</code>", parse_mode="html")
 
     elif chat_type in ["group", "supergroup"]:
         chat_id = message.chat.id
@@ -31,4 +32,4 @@ async def show_id(client, message: Message):
         if file_info:
             text += f"<b>{file_info.message_type}:</b> <code>{file_info.file_id}</code>\n"
 
-        await message.reply_text(text)
+        await message.reply_text(text, parse_mode="html")
